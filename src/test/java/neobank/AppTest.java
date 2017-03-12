@@ -17,4 +17,13 @@ public class AppTest {
 		bankApp.addUser(newUser);
 		assertEquals(1, bankApp.getUsers().size());
 	}
+	
+	@Test
+	public void deleteUserTest() {
+		App bankApp = new App();
+		User newUser = new User("firstname", "lastname", Calendar.getInstance().getTime(), "address", "phone");
+		bankApp.addUser(newUser);
+		bankApp.deleteUser(newUser.getId());
+		assertEquals(0, bankApp.getUsers().size());
+	}
 }
