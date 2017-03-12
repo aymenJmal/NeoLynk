@@ -13,17 +13,34 @@ public class App {
 		users.add(user);
 	}
 	
+	public User getUser(String id) {
+		List<User> foundUsers = users.stream()
+				.filter(user -> user.getId().equals(id))
+				.collect(Collectors.toList());
+		
+		if (foundUsers.size() == 1) {
+			return foundUsers.get(0);
+		}
+		
+		return null;
+	}
+	
 	public List<User> getUsers() {
 		return users;
 	}
 	
 	public void deleteUser(String id) {
-		List<User> foundUsers = users.stream()
-			.filter(user -> user.getId().equals(id))
-			.collect(Collectors.toList());
+		User user = getUser(id);
 		
-		if (foundUsers.size() == 1) {
-			users.remove(foundUsers.get(0));
+		if (null != user) {
+			users.remove(user);
+		}
+	}
+
+	public void updateUserAddress(String id, String newAddress) {
+		User user = getUser(id);
+		if (null != user) {
+			user.setAddress(newAddress);
 		}
 	}
 }
