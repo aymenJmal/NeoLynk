@@ -1,12 +1,19 @@
 package neobank.models;
 
 import java.util.Date;
+import java.util.UUID;
 
 public class Account {
 	private double balance;
 	private String id;
 	private Date creationDate;
 	
+	public Account(double balance, Date creationDate) {
+		this.id = UUID.randomUUID().toString();
+		this.balance = balance;
+		this.creationDate = creationDate;
+	}
+
 	public double getBalance() {
 		return balance;
 	}
@@ -24,7 +31,5 @@ public class Account {
 	}
 	public void setCreationDate(Date creationDate) {
 		this.creationDate = creationDate;
-	}
-
-	
+	}	
 }
