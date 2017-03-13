@@ -3,7 +3,6 @@ package neobank;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Calendar;
-import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -28,6 +27,8 @@ public class AppTest {
 		
 		firstAccount = new Account(0, Calendar.getInstance().getTime());
 		bankApp.addAccount(firstAccount);
+		
+		bankApp.linkAccountToUser(firstUser.getId(), firstAccount);
 	}
 	
 	@Test
@@ -63,21 +64,29 @@ public class AppTest {
 	
 	@Test
 	public void addAccountTest() {
-		assertEquals(1, bankApp.getAccount().size());
+		assertEquals(1, bankApp.getAccounts().size());
+	}
+	
+	@Test
+	public void getOwnerTest() {
+		User owner = bankApp.getOwner(firstAccount.getId());
+		assertEquals(firstUser, owner);
 	}
 
 	@Test
 	public void deleteAccountTest() {
+		assertEquals(1, firstUser.getAccounts().size());
 		bankApp.deleteAccount(firstAccount.getId());
-		assertEquals(0, bankApp.getAccount().size());
+		assertEquals(0, firstUser.getAccounts().size());
+		assertEquals(0, bankApp.getAccounts().size());
 	}
-	
+
 	@Test
 	public void getAccountExistsTest() {
 		Account foundAccount = bankApp.getAccount(firstAccount.getId());
-		assertEquals(firstUser, foundAccount);
+		assertEquals(firstAccount, foundAccount);
 	}
-	
+
 	@Test
 	public void getAccountNullTest() {
 		Account foundAccount = bankApp.getAccount("-1");
@@ -85,40 +94,32 @@ public class AppTest {
 	}
 
 	@Test
-	public void withdrawMoneyAccountTest(String id, double withdraw) {
-		firstAccount.setBalance(withdraw);
-		bankApp.withdrawMoneyAccount(firstAccount.getId(), withdraw);
-		assertEquals(0, firstAccount.getBalance(), EPSILON);
+	public void withdrawMoneyAccountTest() {
+		final double amount = 1000;
+		bankApp.withdrawMoneyAccount(firstAccount.getId(), amount);
+		assertEquals(-1000, firstAccount.getBalance(), EPSILON);
 	}
 
 	@Test
-	public void depositMoneyAccountTest(String id, double deposit) {
-		firstAccount.setBalance(deposit);
-		bankApp.depositMoneyAccount(firstAccount.getId(), deposit);
-		assertEquals(0, firstAccount.getBalance(), EPSILON);
+	public void depositMoneyAccountTest() {
+		final double amount = 1000;
+		bankApp.depositMoneyAccount(firstAccount.getId(), amount);
+		assertEquals(1000, firstAccount.getBalance(), EPSILON);
 	}
-	
+
 	@Test
-	public void linkAccountToUserTest(String id, Account account) {
-		User user = bankApp.getUser(id);
-		user.getAccounts().add(account);
-		assertEquals(1, user.getAccounts().size());
+	public void linkAccountToUserTest() {
+		assertEquals(1, firstUser.getAccounts().size());
+		assertEquals(firstAccount.getId(), firstUser.getAccounts().get(0));
 	}
-	
+
 	@Test
-	public void linkAccountsToUserTest(String id, List<Account> accounts) {
-		User user = bankApp.getUser(id);
-		accounts.forEach(account->user.getAccounts().add(account));
-		assertEquals(accounts.size(), user.getAccounts().size());
-	}
-	
-	@Test
-	public List<Account> getUsersAccountsTest(String id) {
-		return null;
-	}
-	
-	@Test
-	public double getBalanceForAccountsOfUserTest(String id) {
-		return 0;
+	public void getUserWealthTest() {
+		double balance1 = 1000, balance2 = -200;
+		bankApp.addAccount(new Account(balance1, Calendar.getInstance().getTime()));
+		bankApp.addAccount(new Account(balance2, Calendar.getInstance().getTime()));
+		bankApp.linkAccountsToUser(firstUser.getId(), bankApp.getAccounts());
+		
+		assertEquals(balance1 + balance2, bankApp.getUserWealth(firstUser.getId()), EPSILON);
 	}	
 }

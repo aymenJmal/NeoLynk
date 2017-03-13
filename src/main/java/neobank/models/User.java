@@ -1,5 +1,6 @@
 package neobank.models;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -12,7 +13,7 @@ public class User {
 	private String address;
 	private String phone;
 	
-	private List<Account> accounts;
+	private List<String> accountsId = new ArrayList<String>();
 	
 	public User(String firstname, String lastname, Date birthday, String address, String phone) {
 		this.id = UUID.randomUUID().toString();
@@ -59,10 +60,16 @@ public class User {
 	public void setPhone(String phone) {
 		this.phone = phone;
 	}
-	public List<Account> getAccounts() {
-		return accounts;
+	public List<String> getAccounts() {
+		return accountsId;
 	}
-	public void setAccounts(List<Account> accounts) {
-		this.accounts = accounts;
+	public void setAccounts(List<String> accounts) {
+		this.accountsId = accounts;
+	}
+	public void addAccount(String accountId) {
+		this.accountsId.add(accountId);
+	}
+	public void removeAccount(String accountId) {
+		this.accountsId.remove(accountId);
 	}
 }
